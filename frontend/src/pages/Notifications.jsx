@@ -1,0 +1,4 @@
+import { useEffect, useState } from 'react'
+import { request } from '../services/api'
+import Notice from '../components/Notice'
+export default function Notifications(){const [items,setItems]=useState([]);const [error,setError]=useState('');useEffect(()=>{request('/api/notifications').then(setItems).catch(e=>setError(e.message))},[]);return <div><h1 className="text-2xl font-bold mb-1">Notifications</h1><p className="text-slate-500 mb-6">Updates related to your tickets.</p><Notice error={error}/><div className="bg-white border rounded-xl divide-y">{items.length?items.map(n=><div key={n.id} className="p-5"><div className="font-medium">{n.message}</div><div className="text-xs text-slate-500 mt-2">{n.createdAt?new Date(n.createdAt).toLocaleString():''}</div></div>):<p className="p-6 text-slate-500">No notifications to show.</p>}</div></div>}
