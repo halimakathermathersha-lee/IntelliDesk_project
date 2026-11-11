@@ -2,6 +2,7 @@ package com.intellidesk.config;
 import com.intellidesk.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -34,8 +35,9 @@ import java.util.List;
                   .cors(Customizer.withDefaults())
                   .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(a -> a
+                            .requestMatchers("/", "/error").permitAll()
                             .requestMatchers("/api/auth/**").permitAll()
-                            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .anyRequest().authenticated()
                     )
                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
