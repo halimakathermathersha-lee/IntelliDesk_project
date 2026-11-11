@@ -33,24 +33,43 @@ import java.util.List;
             http.csrf(csrf->csrf.disable())
                   .cors(Customizer.withDefaults())
                   .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                  .authorizeHttpRequests(a->a.requestMatchers("/api/auth/**")
-                  .permitAll()
-                  .anyRequest()
-                  .authenticated())
+                    .authorizeHttpRequests(a -> a
+                            .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                            .anyRequest().authenticated()
+                    )
                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
             return http.build();
        }
-       @Bean
-       CorsConfigurationSource corsConfigurationSource(){
 
-             CorsConfiguration c=new CorsConfiguration();
-             c.setAllowedOrigins(List.of("http://localhost:5173"));
-             c.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
-             c.setAllowedHeaders(List.of("Authorization","Content-Type"));
+     @Bean
+     CorsConfigurationSource corsConfigurationSource() {
 
-             UrlBasedCorsConfigurationSource s=new UrlBasedCorsConfigurationSource();
-             s.registerCorsConfiguration("/**",c);
+         CorsConfiguration c = new CorsConfiguration();
 
-             return s;
-            }
-      }
+         c.setAllowedOrigins(List.of(
+                 "http://localhost:5173",
+                 "https://intelli-desk-project.vercel.app"
+         ));
+
+         c.setAllowedMethods(List.of(
+                 "GET", "POST", "PUT", "PATCH",
+                 "DELETE", "OPTIONS"
+         ));
+
+         c.setAllowedHeaders(List.of(
+                 "Authorization",
+                 "Content-Type"
+         ));
+
+         c.setAllowCredentials(true);
+
+         UrlBasedCorsConfigurationSource source =
+                 new UrlBasedCorsConfigurationSource();
+
+         source.registerCorsConfiguration("/**", c);
+
+         return source;
+     }
+
+ }
